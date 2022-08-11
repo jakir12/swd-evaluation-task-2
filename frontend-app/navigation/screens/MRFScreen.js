@@ -1,102 +1,132 @@
 import React, { useState,useEffect,useCallback } from "react";
 import SelectList from 'react-native-dropdown-select-list';
-import { View, ScrollView , StyleSheet,Text, TextInput } from 'react-native';
-import { useForm } from 'react-hook-form';
-import {Button} from 'react-native-paper';
+import { View, ScrollView , StyleSheet,Text, TextInput ,TouchableOpacity, Button} from 'react-native';
 import axios from 'axios';
 
-const customers = [
-  {
-    id: 1,
-    customer_code: 2901,
-    customer_name: "Jakir Hossain"
-  },
-  {
-    id: 2,
-    customer_code: 2902,
-    customer_name: "Sami"
-  },
-  {
-    id: 3,
-    customer_code: 2903,
-    customer_name: "Saad"
-  }
-]
-
+const url = "https://nploy.khandakerproducts.com/api/";
+const headers = {
+  'Content-Type': 'application/json',
+  'Accept': 'application/json',
+};
 export default function MRFScreen({ navigation }) {
     
-    const [selected, setSelected] = React.useState("");
+    const [custSelected, setSelected] = React.useState("");
     const [bankSelected, setBankSelected] = React.useState("");
-    const customers = [
-      {key:'1',value:'Jakir Hossain'},
-      {key:'2',value:'Rawaha Abdullah Sami'},
-      {key:'3',value:'Abdur Rahman Saad'},
-      {key:'4',value:'Ibrahim Salman'},
-      {key:'5',value:'Aysha Tasnim'},
-    ];
+    
+    const [customers, setCustomers] = useState([]);
+    const [banks, setBanks] = useState([]);
 
-    const banks = [
-      {key:'1',value:'Bangledesh Bank'},
-      {key:'2',value:'Sonali Bank'},
-      {key:'3',value:'Janata Bank'},
-      {key:'4',value:'Agrani Bank'},
-      {key:'5',value:'City Bank'},
-    ];
+    useEffect(() => {
 
-    const { register, handleSubmit, setValue } = useForm();
+        const fetchCustomer = async () => {
+          const {data} = await axios.get(`${url}customers`);
+          const cust = data.map((item) => {
+            const ctnm = item.customer_code + '##' + item.customer_name;
+            return {
+                  "key": ctnm,
+                  "value": item.customer_name
+                }
+            })
+          setCustomers(cust);
+        };
+        fetchCustomer();
+      }, []);
 
-    const onSubmit = useCallback(formData => {
-      console.log(formData);
-    }, []);
-    const onChangeField = useCallback(
-      name => text => {
-        setValue(name, text);
-      },
-      []
-    );
 
-  useEffect(() => {
-    register('customer_id');
-    register('bank_id');
-    register('amount');
-    register('note');
-  }, [register]);
+      useEffect(() => {
+        const fetchBanks = async () => {
+          const {data} = await axios.get(`${url}banks`);
+          const bank = data.map((item) => {
+            const bnk_id = item.id + '##' + item.bank_name;
+            return {
+                  "key": bnk_id,
+                  "value": item.bank_name
+                }
+            })
+            setBanks(bank);
+        };
+        fetchBanks();
+      }, []);
+
+
+    const [customer_code, setCustomerCode] = useState(''); 
+    const [bank_id, setBankId] = useState(''); 
+    const [amount, setAmount] = useState(''); 
+    const [note, setNote] = useState(''); 
+
+    onSubmitEdit = () => {
+
+      const custArr = customer_code.split("##");
+      const custCode = custArr[0];
+      const custNm = custArr[1];
+
+      const bnkArr = bank_id.split("##");
+      const bnk_id = bnkArr[0];
+      const bnk_nm = bnkArr[1];
+
+      fetch("https://nploy.khandakerproducts.com/api/money-receipts", {
+        method: "POST",
+        headers,
+        body: JSON.stringify({
+          "customer_code": custCode,
+          "customer_name": custNm,
+          "bank_id": bnk_id,
+          "bank_name": bnk_nm,
+          "amount": amount,
+          "note": note
+        })
+      }).then((res) => res.json())
+        .then(resJson => {
+          if(resJson == "200"){
+            alert("Save Successfully.");
+            setCustomerCode({customer_code: ""});
+            setBankId({bank_id: ""});
+            setAmount({amount: ""});
+            setNote({note: ""});
+            loadContacts();
+          }
+          console.log('post:', resJson)
+        }).catch(e => { console.log(e) })
+    }
 
     return (
         <View style={styles.containerStyle}>
             <ScrollView contentContainerStyle={styles.scrollViewStyle}>
                 <Text style={styles.headingStyle}>Money Receipt</Text>
+                
                 <SelectList 
                     style={styles.dropdown}
                     setSelected={setSelected} 
                     data={customers}  
                     boxStyles={{borderRadius:0}}
-                    onChangeText={onChangeField('customer_id')}
+                    onSelect={() => setCustomerCode(custSelected)}
                   />
+
                 <SelectList 
                     style={styles.dropdown}
                     setSelected={setBankSelected} 
                     data={banks}  
                     boxStyles={{marginTop:15,borderRadius:0}}
-                    onChangeText={onChangeField('bank_id')}
+                    onSelect={() => setBankId(bankSelected)}
                   /> 
                 <TextInput 
                       type="numeric" 
                       keyboardType="numeric" 
                       style={styles.input}
                       placeholder="Enter Amount"
-                      onChangeText={onChangeField('amount')}
-                />
+                      value={amount}
+                      onChangeText={(text) => setAmount(text)}
+               />
                 <TextInput 
                       type="text" 
                       style={styles.input} 
-                      name="node" 
                       placeholder="Enter Note"
-                      onChangeText={onChangeField('note')}
+                      value={note}
+                      onChangeText={(text) => setNote(text)}
                 />
-                <Button mode={'contained'} style={styles.button} onPress={handleSubmit(onSubmit)}>
-                Submit
-                </Button>
+                <TouchableOpacity style={styles.button} onPress={onSubmitEdit}>
+                  <Text style={styles.buttonText}>Submit</Text>
+                </TouchableOpacity>
           </ScrollView>
       </View>
     );
@@ -129,7 +159,14 @@ const styles = StyleSheet.create({
       padding: 10,
       width: '100%'
     },
-    button:{
-      marginTop: 50,
-    }
+    button: {
+      marginTop: 20,
+      padding: 10,
+      borderRadius: 0,
+      backgroundColor: 'steelblue',
+    },
+    buttonText: {
+      textAlign: 'center',
+      color: 'white'
+    },
   });

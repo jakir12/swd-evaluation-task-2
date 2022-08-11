@@ -1,5 +1,16 @@
 import Customer from "../models/CustomerModule.js";
 
+
+export const getIndex = async(req, res)=>{
+    try {
+        const msg = "Hello Nploy";
+        res.json(msg);
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
+
 // Get Customer List
 
 export const getCustomers = async(req, res)=>{
@@ -46,7 +57,7 @@ export const saveCustomer = async(req, res)=>{
         try {
             const insertID = await Customer.create({customer_code: customer_code, customer_name: customer_name, customer_address: customer_address});
             // console.log(insertID.id); This is the way to get last insert id
-            res.status(201).json({msg: "Customer Created Successfuly"});
+            res.status(200).json({msg: "Customer Created Successfuly"});
         } catch (error) {
             console.log(error.message);
         }

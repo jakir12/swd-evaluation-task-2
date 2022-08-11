@@ -27,8 +27,7 @@ app.use(BankRoute);
 app.use(MoneyReceiptRoute);
 
 
-// Server Creation
-
-app.listen(3003,()=>{
-    console.log("Server is Running on Port: 3003");
-})
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}.`);
+});

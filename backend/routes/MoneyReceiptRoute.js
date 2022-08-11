@@ -9,10 +9,10 @@ import {
 
 const router = express.Router();
 
-router.get('/money-receipts', getMoneyRecipts);
-router.get('/money-receipts/:id', getMoneyReciptById);
-router.post('/money-receipts', saveMoneyRecipt);
-router.patch('/money-receipts/:id', updateMoneyRecipt); // Patch is uses for update in node js
-router.delete('/money-receipts/:id', deleteMoneyRecipt);
+router.get('/api/money-receipts', getMoneyRecipts);
+router.get('/api/money-receipts/:id', getMoneyReciptById);
+router.post('/api/money-receipts', saveMoneyRecipt);
+router.patch('/api/money-receipts/:id', updateMoneyRecipt); // Patch is uses for update in node js
+router.delete('/api/money-receipts/:id', deleteMoneyRecipt);
 
 export default router;

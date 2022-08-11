@@ -8,12 +8,14 @@ import HomeScreen from './screens/HomeScreen';
 import CusttomerScreen from './screens/CustomerScreen';
 import BankScreen from './screens/BankScreen';
 import MRFScreen from './screens/MRFScreen';
+import MRListScreen from './screens/MRListScreen';
 
 //Screen names
 const homeName = "Home";
 const customerName = "Customer";
 const bankName = "Bank";
-const moneyReceipt = "Money Receipt";
+const moneyReceipt = "Add MR";
+const moneyReceiptList = "MR List";
 
 const Tab = createBottomTabNavigator();
 
@@ -38,7 +40,11 @@ function MainContainer() {
            
             } else if (rn === moneyReceipt) {
               iconName = focused ? 'list' : 'list-outline';
+
+            } else if (rn === moneyReceiptList) {
+              iconName = focused ? 'list' : 'list-outline';
             }
+
 
             // You can return any component that you like here!
             return <Ionicons name={iconName} size={size} color={color} />;
@@ -53,6 +59,7 @@ function MainContainer() {
 
         <Tab.Screen name={homeName} component={HomeScreen} />
         <Tab.Screen name={moneyReceipt} component={MRFScreen} />
+        <Tab.Screen name={moneyReceiptList} component={MRListScreen} />
         <Tab.Screen name={customerName} component={CusttomerScreen} />
         <Tab.Screen name={bankName} component={BankScreen} />
       </Tab.Navigator>

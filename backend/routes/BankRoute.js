@@ -9,10 +9,10 @@ import {
 
 const router = express.Router();
 
-router.get('/banks', getBanks);
-router.get('/banks/:id', getBankById);
-router.post('/banks', saveBank);
-router.patch('/banks/:id', updateBank); // Patch is uses for update in node js
-router.delete('/banks/:id', deleteBank);
+router.get('/api/banks', getBanks);
+router.get('/api/banks/:id', getBankById);
+router.post('/api/banks', saveBank);
+router.patch('/api/banks/:id', updateBank); // Patch is uses for update in node js
+router.delete('/api/banks/:id', deleteBank);
 
 export default router;

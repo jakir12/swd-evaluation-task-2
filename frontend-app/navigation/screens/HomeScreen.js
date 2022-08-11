@@ -9,8 +9,9 @@ import {
   Button,
   TouchableOpacity,
 } from "react-native";
-
 export default function HomeScreen({ navigation }) {
+
+
     return (
         <View style={styles.container}>
             <Image style={styles.image} source={require("../../assets/log2.png")} />
@@ -31,19 +32,8 @@ const styles = StyleSheet.create({
       alignItems: "center",
       justifyContent: "center",
     },
-   
     image: {
       marginBottom: 40,
     },
-   
-    inputView: {
-      backgroundColor: "#ededed",
-      borderRadius: 30,
-      width: "80%",
-      height: 60,
-      padding: 16,
-      marginBottom: 20,
-   
-      alignItems: "center",
-    },
+
   });
